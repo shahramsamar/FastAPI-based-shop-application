@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from database import database
 from models import models
-from routers import products, customers
-
+from routers import products, customers, orders
 
 # Initialize FastAPI application
 app = FastAPI()
@@ -13,3 +12,4 @@ models.Base.metadata.create_all(bind=database.engine)
 # Include routers
 app.include_router(products.router, prefix="/products", tags=["products"])
 app.include_router(customers.router, prefix="/customers", tags=["customers"])
+app.include_router(orders.router, prefix="/orders", tags=["orders"])
