@@ -52,12 +52,13 @@ async def customer_update(customer_id: int, customer: schemas.CustomerCreate,
                          db: Session = Depends(get_db)):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not  db_customer:
-        db_customer.name = customer.name
-        db_customer.email = customer.email
-        db.commit()
-        db.refresh(db_customer)
-        return db_customer
-    raise HTTPException(status_code=404, detail="existing customer")
+            raise HTTPException(status_code=404, detail="existing customer")
+
+    db_customer.name = customer.name
+    db_customer.email = customer.email
+    db.commit()
+    db.refresh(db_customer)
+    return db_customer
 
    
 
