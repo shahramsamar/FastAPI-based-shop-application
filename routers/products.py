@@ -54,13 +54,14 @@ async def product_update(product_id: int,product: schemas.ProductBase,
                          db: Session = Depends(get_db)):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not db_product:
-        db_product.name = product.name
-        db_product.price = product.price
-        db_product.quantity = product.quantity
-        db.commit()
-        db.refresh(db_product)
-        return db_product
-    raise HTTPException(status_code=404, detail="Product not found")
+        raise HTTPException(status_code=404, detail="Product not found")
+    db_product.name = product.name
+    db_product.price = product.price
+    db_product.quantity = product.quantity
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+    
 
    
 
