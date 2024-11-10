@@ -42,37 +42,37 @@ async def customer_create(customer: schemas.CustomerCreate,db: Session = Depends
         db.commit()
         db.refresh(db_customer)
         raise HTTPException(status_code=200, detail="Customer created successfully")
+    
     raise HTTPException(status_code=404, detail="Customer  created failed")
 
 
 
 @router.put("/{customer_id}", response_model=schemas.Customer)
-async def product_update(customer_id: int, customer: schemas.CustomerCreate,
+async def customer_update(customer_id: int, customer: schemas.CustomerCreate,
                          db: Session = Depends(get_db)):
-    db_customer = db.query(models.Product).filter(models.Product.id == customer_id).first()
-    if not db_customer:
-        raise HTTPException(status_code=404, detail="customer not found")
-    db_customer.name = customer.name
-    db_customer.email = customer.email
-    db.commit()
-    db.refresh(db_customer)
-    return db_customer
+    db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    if not  db_customer:
+        db_customer.name = customer.name
+        db_customer.email = customer.email
+        db.commit()
+        db.refresh(db_customer)
+        return db_customer
+    raise HTTPException(status_code=404, detail="existing customer")
 
    
 
 
       
 @router.delete("/{customer_id}", response_model=dict)
-async def product_delete(customer_id: int, db: Session = Depends(get_db)):
-    # Retrieve the product by ID
-    db_product = db.query(models.Product).filter(models.Product.id == customer_id).first()
+async def customer_delete(customer_id: int, db: Session = Depends(get_db)):
+    
+    db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     
     # If the product doesn't exist, raise a 404 error
-    if not  db_product :
-        raise HTTPException(status_code=404, detail="Product not found")
+    if not  db_customer :
+        raise HTTPException(status_code=404, detail="Customer not found")
     
-    # Delete the product and commit the transaction
-    db.delete(db_product)
+    db.delete(db_customer)
     db.commit()
     
-    raise HTTPException(status_code=200, detail="Product deleted successfully")
+    raise HTTPException(status_code=200, detail="Customer deleted successfully")
