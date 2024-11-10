@@ -22,7 +22,7 @@ async def product_list(search: Optional[str] = Query(None,description="search by
 
 
 @router.get("/{product_id}", response_model=schemas.Product)
-async def product_search(product_id: int, db: Session = Depends(get_db)):
+async def product_read(product_id: int, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if product is None:
         raise HTTPException(status_code=404, 
@@ -54,13 +54,13 @@ async def product_update(product_id: int,product: schemas.ProductBase,
                          db: Session = Depends(get_db)):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not db_product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    db_product.name = product.name
-    db_product.price = product.price
-    db_product.quantity = product.quantity
-    db.commit()
-    db.refresh(db_product)
-    return db_product
+        db_product.name = product.name
+        db_product.price = product.price
+        db_product.quantity = product.quantity
+        db.commit()
+        db.refresh(db_product)
+        return db_product
+    raise HTTPException(status_code=404, detail="Product not found")
 
    
 
